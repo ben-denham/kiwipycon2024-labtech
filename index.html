@@ -1,40 +1,670 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+    <title>Labtech: Concurrency and caching in Python for busy scientists</title>
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+    <link rel="stylesheet" href="dist/reset.css">
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/black.css">
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css">
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+    <style>
+     :root {
+         --r-background-color: #21125E;
+         --r-link-color: #4618f1;
+         --r-main-font: 'Ubuntu Mono', sans-serif;
+         --r-heading-font: 'Ubuntu Mono', sans-serif;
+     }
+
+     .reveal pre code.hljs {
+         background: #3C3752;
+         padding: 10px;
+         border-radius: 5px;
+     }
+     .hljs-meta {
+         color: #AC99F2;
+     }
+
+     .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+         text-transform: none;
+     }
+
+     .tasks {
+         margin: 50px 0;
+         position: relative;
+     }
+
+     .tasks .task-line {
+         margin: 30px 0;
+         display: flex;
+         gap: 50px;
+         position: relative;
+     }
+
+     .tasks .task {
+         box-sizing: border-box;
+         height: 60px;
+         width: 100%;
+         position: relative;
+         background: #D1CEB0;
+         border: 7px solid #8F8F8F;
+         border-radius: 7px;
+     }
+
+     .tasks .task .task-label {
+         position: relative;
+         z-index: 1;
+         line-height: 46px;
+         color: black;
+         font-weight: bold;
+     }
+
+     .tasks .task .task-progress {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 0%;
+         height: 100%;
+         background: #FFE500;
+     }
+
+     .tasks .task.cached {
+         background: #00FF66;
+     }
+
+     section.present > .tasks .task .task-progress.visible {
+         animation-duration: 5s;
+         /* animation-iteration-count: infinite; */
+         animation-fill-mode: forwards;
+         animation-timing-function: linear;
+     }
+
+     .arrow {
+         position: absolute;
+         z-index: -1;
+     }
+     .arrow .arrow-shaft {
+         width: 100%;
+         height: 5px;
+         background: white;
+     }
+     .arrow .arrow-head {
+         position: absolute;
+         right: -7px;
+         top: -7.5px;
+         width: 0;
+         height: 0;
+         border-top: 10px solid transparent;
+         border-bottom: 10px solid transparent;
+         border-left: 10px solid white;
+     }
+
+    </style>
+
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section data-markdown>
+          <textarea data-template>
+# labtech
+
+<div style="width: 260px; height: 260px; margin: 20px auto; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+  <img src="images/fifo.svg" style="width: 85%; margin: 0;">
+</div>
+
+## Concurrency and caching in Python for busy scientists <!-- .element style="font-size: 1.2em; font-style: italic;" -->
+
+## By Ben Denham
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+## Elevator Pitch
+
+* Who
+* What
+* Why
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+## Outline
+          </textarea>
+        </section>
+
+        <section>
+
+          <style>
+           @keyframes task-progress-1 {
+               0% { width: 0%; }
+               80% { width: 100%; }
+               100% { width: 100%; }
+           }
+          </style>
+
+          <section data-markdown>
+            <textarea data-template>
+## A Single Experiment
+
+<div class="tasks">
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-animation-name="task-progress-1"></div>
+      <div class="task-label">experiment(c=1)</div>
+    </div>
+  </div>
+</div>
+
+<!--
+     from sklearn.datasets import fetch_20newsgroups
+     from sklearn.feature_extraction.text import CountVectorizer
+     from sklearn.linear_model import LogisticRegression
+     from sklearn.metrics import accuracy_score
+-->
+
+<div style="font-size: 0.85em;">
+
+```python [|2-4|6-9|1,11-14|16-17]
+def experiment(c: int):
+    # Load train and test datasets
+    txt_train = fetch_20newsgroups(subset='train')
+    txt_test = fetch_20newsgroups(subset='test')
+
+    # Transform text into "bag-of-words" (BoW)
+    vectorizer = CountVectorizer(binary=True)
+    bow_train = vectorizer.fit_transform(txt_train.data)
+    bow_test = vectorizer.transform(txt_test.data)
+
+    # Train classifier to predict target labels from BoW
+    classifier = LogisticRegression(C=c)
+    classifier.fit(bow_train, txt_train.target)
+    target_pred = classifier.predict(bow_test)
+
+    # Evaluate classifier accuracy
+    return accuracy_score(txt_test.target, target_pred)
+```
+
+</div>
+            </textarea>
+          </section>
+
+        </section>
+
+        <section>
+
+          <style>
+           .tasks-2 .task .task-progress {
+               animation-duration: 13s !important;
+           }
+           @keyframes task-progress-2a {
+               0% { width: 0%; }
+               30% { width: 100%; }
+               100% { width: 100%; }
+           }
+           @keyframes task-progress-2b {
+               0% { width: 0%; }
+               30% { width: 0%; }
+               60% { width: 100%; }
+               100% { width: 100%; }
+           }
+           @keyframes task-progress-2c {
+               0% { width: 0%; }
+               60% { width: 0%; }
+               90% { width: 100%; }
+               100% { width: 100%; }
+           }
+          </style>
+
+          <section data-markdown>
+            <textarea data-template>
+### Slow-Down #1: Variable Permutations
+
+<div class="tasks tasks-2">
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2a"></div>
+      <div class="task-label">experiment(c=0.01)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2b"></div>
+      <div class="task-label">experiment(c=1)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2c"></div>
+      <div class="task-label">experiment(c=100)</div>
+    </div>
+  </div>
+</div>
+
+            </textarea>
+          </section>
+
+          <style>
+           @keyframes task-progress-3 {
+               0% { width: 0%; }
+               80% { width: 100%; }
+               100% { width: 100%; }
+           }
+          </style>
+
+          <section data-markdown>
+            <textarea data-template>
+### Speed-Up #1: Concurrency!
+
+<div class="tasks">
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
+      <div class="task-label">Experiment(c=0.01)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
+      <div class="task-label">Experiment(c=1)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
+      <div class="task-label">Experiment(c=100)</div>
+    </div>
+  </div>
+</div>
+
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+### Parallel tasks with Labtech
+
+```python [|3-8|10|12-13]
+import labtech as lt
+
+@lt.task
+class Experiment:
+    c: int
+
+    def run(self):
+        return experiment(c=self.c)
+
+experiments = [Experiment(c=c) for c in [0.01, 1, 100]]
+
+lab = lt.Lab(max_workers=3)
+results = lab.run_tasks(experiments)
+```
+
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+## Demo
+            </textarea>
+          </section>
+
+        </section>
+
+        <section>
+
+          <style>
+           .tasks-3 .task-label {
+               text-align: left;
+               padding-left: 10px;
+           }
+          </style>
+
+<section data-markdown>
+            <textarea data-template>
+### Slow-Down #2: Redundancy in Tasks
+
+<div class="tasks tasks-3">
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
+      <div class="task-label">Prepare BoW --> Evaluate Classifier (c=0.01)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
+      <div class="task-label">Prepare BoW --> Evaluate Classifier (c=1)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
+      <div class="task-label">Prepare BoW --> Evaluate Classifier (c=100)</div>
+    </div>
+  </div>
+</div>
+
+            </textarea>
+          </section>
+          <style>
+           @keyframes task-progress-4a {
+               0% { width: 0%; }
+               40% { width: 100%; }
+               100% { width: 100%; }
+           }
+           @keyframes task-progress-4b {
+               0% { width: 0%; }
+               40% { width: 0%; }
+               90% { width: 100%; }
+               100% { width: 100%; }
+           }
+          </style>
+
+          <section data-markdown>
+            <textarea data-template>
+### Speed-Up #2: Share Dependencies
+
+<div class="tasks">
+  <div class="task-line">
+    <div class="arrow" style="top: 75px; left: 237px; width: 65px; transform: rotate(0.375turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div style="width: 25%;"></div>
+    <div class="task" style="width: 65%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-4b"></div>
+      <div class="task-label">ClassificationTask(c=0.01)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="arrow" style="top: 27.5px; left: 248px; width: 65px; transform: rotate(0.5turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div class="task" style="width: 25%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-4a"></div>
+      <div class="task-label">BowTask()</div>
+    </div>
+    <div class="task" style="width: 65%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-4b"></div>
+      <div class="task-label">ClassificationTask(c=1)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="arrow" style="top: -20px; left: 237px; width: 65px; transform: rotate(0.625turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div style="width: 25%;"></div>
+    <div class="task" style="width: 65%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-4b"></div>
+      <div class="task-label">ClassificationTask(c=100)</div>
+    </div>
+  </div>
+</div>
+
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+
+<!--
+```python
+@lt.task
+class BowTask:
+
+    def run(self):
+        txt_train = fetch_20newsgroups(subset='train')
+        txt_test = fetch_20newsgroups(subset='test')
+
+        vectorizer = CountVectorizer(binary=True)
+        bow_train = vectorizer.fit_transform(txt_train.data)
+        bow_test = vectorizer.transform(txt_test.data)
+        return {'bow_train': bow_train, 'target_train': txt_train.target,
+                'bow_test': bow_test,   'target_test': txt_test.target}
+
+@lt.task
+class ClassificationTask:
+    data: BowTask
+    c: int
+
+    def run(self):
+        data = self.data.result
+        classifier = LogisticRegression(C=c)
+        classifier.fit(data['bow_train'], data['target_train'])
+        target_pred = classifier.predict(data['bow_test'])
+        return accuracy_score(data['target_test'], target_pred)
+```
+-->
+
+<div style="font-size: 0.82em;">
+
+### Defining Task Types with Dependencies
+
+```python
+@lt.task
+class BowTask:
+
+    def run(self):
+        ...
+        return (bow_train, bow_test)
+
+@lt.task
+class ClassificationTask:
+    data_task: BowTask
+    c: int
+
+    def run(self):
+        bow_train, bow_test = self.data_task.result
+        ...
+        return accuracy_score(...)
+```
+
+</div>
+
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+### Running Tasks with Dependencies
+
+```python
+experiments = [
+    ClassificationTask(
+        data_task=BowTask(),
+        c=c,
+    )
+    for c in [0.01, 1, 100]
+]
+lab = lt.Lab(max_workers=3)
+results = lab.run_tasks(experiments)
+```
+
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+## Demo
+            </textarea>
+          </section>
+
+        </section>
+
+        <section>
+
+          <section data-markdown>
+            <textarea data-template>
+### Slow-Down #3: Re-running Tasks
+
+* TODO
+            </textarea>
+          </section>
+
+          <style>
+           @keyframes task-progress-5a {
+               0% { width: 0%; }
+               40% { width: 100%; }
+               100% { width: 100%; }
+           }
+           @keyframes task-progress-5b {
+               0% { width: 0%; }
+               50% { width: 100%; }
+               100% { width: 100%; }
+           }
+           @keyframes task-progress-5c {
+               0% { width: 0%; }
+               40% { width: 0%; }
+               90% { width: 100%; }
+               100% { width: 100%; }
+           }
+          </style>
+
+          <section data-markdown>
+            <textarea data-template>
+### Speed-Up #3: Caching Task Results
+
+<div class="tasks">
+  <div class="task-line">
+    <div class="arrow" style="top: 75px; left: 284px; width: 65px; transform: rotate(0.375turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div style="width: 30%;"></div>
+    <div class="task cached" style="width: 60%;">
+      <div class="task-label">Experiment(seed=1)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="arrow" style="top: 27.5px; left: 295px; width: 65px; transform: rotate(0.5turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div class="task cached" style="width: 30%;">
+      <div class="task-label">Foo()</div>
+    </div>
+    <div class="task cached" style="width: 60%;">
+      <div class="task-label">Experiment(seed=2)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="arrow" style="top: -20px; left: 284px; width: 65px; transform: rotate(0.625turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div style="width: 30%;"></div>
+    <div class="task cached" style="width: 60%;">
+      <div class="task-label">Experiment(seed=3)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="arrow" style="top: -49px; left: 243px; width: 150px; transform: rotate(0.68turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div style="width: 30%;"></div>
+    <div class="task" style="width: 60%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5b"></div>
+      <div class="task-label">Experiment(seed=3)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="arrow" style="top: 27.5px; left: 295px; width: 65px; transform: rotate(0.5turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div class="task" style="width: 30%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5a"></div>
+      <div class="task-label">Foo()</div>
+    </div>
+    <div class="task" style="width: 60%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5c"></div>
+      <div class="task-label">Experiment(seed=3)</div>
+    </div>
+  </div>
+  <div class="task-line">
+    <div class="arrow" style="top: -20px; left: 284px; width: 65px; transform: rotate(0.625turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
+    <div style="width: 30%;"></div>
+    <div class="task" style="width: 60%;">
+      <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5c"></div>
+      <div class="task-label" style="position: relative; top: -8px;">...</div>
+    </div>
+  </div>
+</div>
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+## Results Caching in Labtech
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+## Demo
+            </textarea>
+          </section>
+
+        </section>
+
+        <section>
+## Taking it to Extremes
+
+* 100s of tasks
+* Scale up in the cloud
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+## Design Considerations
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+## Landscape of Tools
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+## Future
+          </textarea>
+        </section>
+
+<!--
+        <section data-markdown>
+          <textarea data-template>
+          </textarea>
+        </section>
+-->
+
+      </div>
+    </div>
+
+    <script src="vendor/jquery-3.7.1.min.js"></script>
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+     // More info about initialization & config:
+     // - https://revealjs.com/initialization/
+     // - https://revealjs.com/config/
+     Reveal.initialize({
+       hash: true,
+       controls: false,
+
+       // Learn about plugins: https://revealjs.com/plugins/
+       plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+     });
+    </script>
+
+    <script>
+     (function($) {
+
+       Reveal.on('ready', function () {
+
+         $('[data-animation-name]').each(function(idx) {
+           const animationName = $(this).data('animation-name');
+           const className = `animation-${idx}`;
+           $(this).addClass(className);
+           const sheet = window.document.styleSheets[0];
+           const style = `<style>.${className}.visible { animation-name: ${animationName}; }</style>`
+           $('html > head').append(style);
+         });
+
+       });
+     })(jQuery);
+    </script>
+
+  </body>
 </html>

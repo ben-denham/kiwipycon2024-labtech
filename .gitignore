@@ -9,3 +9,6 @@ log/*.log
 tmp/**
 node_modules/
 .sass-cache
+
+.virtual_documents/
+.ipynb_checkpoints/
