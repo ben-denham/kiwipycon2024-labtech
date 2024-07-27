@@ -18,8 +18,8 @@
      :root {
          --r-background-color: #21125E;
          --r-link-color: #4618f1;
-         --r-main-font: 'Ubuntu Mono', sans-serif;
-         --r-heading-font: 'Ubuntu Mono', sans-serif;
+         --r-main-font: 'Ubuntu', sans-serif;
+         --r-heading-font: 'Ubuntu', sans-serif;
      }
 
      .reveal pre code.hljs {
@@ -36,8 +36,9 @@
      }
 
      .tasks {
-         margin: 50px 0;
+         margin: 40px 0;
          position: relative;
+         font-family: 'Ubuntu Mono', monospace, sans-serif;
      }
 
      .tasks .task-line {
@@ -74,7 +75,12 @@
          background: #FFE500;
      }
 
-     .tasks .task.cached {
+     .tasks .task.cached.fragment {
+         visibility: visible;
+         opacity: 100;
+     }
+
+     .tasks .task.cached.fragment.visible {
          background: #00FF66;
      }
 
@@ -105,6 +111,16 @@
          border-left: 10px solid white;
      }
 
+     .reveal .highlight.fragment {
+         color: var(--r-main-color);
+         visibility: visible;
+         opacity: 100;
+     }
+
+     .reveal .highlight, .reveal .highlight.fragment.visible {
+         color: #FFE500;
+     }
+
     </style>
 
   </head>
@@ -113,31 +129,84 @@
       <div class="slides">
         <section data-markdown>
           <textarea data-template>
-# labtech
+<h1 class="highlight">labtech</h1>
 
 <div style="width: 260px; height: 260px; margin: 20px auto; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
   <img src="images/fifo.svg" style="width: 85%; margin: 0;">
 </div>
 
-## Concurrency and caching in Python for busy scientists <!-- .element style="font-size: 1.2em; font-style: italic;" -->
+<h2 style="font-size: 1.3em;"><span class="highlight">Concurrency</span> and <span class="highlight">caching</span> in Python for <span class="highlight">busy scientists</span></h2>
 
-## By Ben Denham
+## Ben Denham - Software Engineer & Data Scientist  <!-- .element style="font-size: 0.8em;" -->
           </textarea>
         </section>
 
         <section data-markdown>
           <textarea data-template>
-## Elevator Pitch
+## What is <span class="highlight">Labtech</span> ?
 
-* Who
-* What
-* Why
+<div class="fragment">
+
+A <span class="highlight fragment">friendly</span> Python library for <span class="highlight fragment">efficiently</span> running and managing <span class="highlight fragment">experiments</span>
+
+</div>
+
+<aside class="notes">
+
+  * Who
+  * Why
+  * What
+
+</aside>
           </textarea>
         </section>
 
         <section data-markdown>
           <textarea data-template>
-## Outline
+### What counts as an <span class="highlight">*Experiment*</span> ?
+
+  <ul>
+    <li class="fragment">
+      <strong>Typically:</strong>
+      <ul>
+        <li>Running an expensive simulation</li>
+        <li>Training a machine learning model</li>
+      </ul>
+    </li>
+    <li class="fragment">
+      <strong>Technically:</strong>
+      <ul>
+        <li>
+          Any <span class="highlight">task</span> run with <span class="highlight">many configurations</span>,
+          <br>often made up of <span class="highlight">multiple steps</span>.
+        </li>
+        <li class="fragment">
+          E.g. A web-scraper run on many webpages
+        </li>
+      </ul>
+    </li>
+    <li class="fragment">
+      <strong>Essence:</strong> <span class="highlight">Interactive</span>
+      <ul>
+        <li class="fragment">Closely monitoring execution</li>
+        <li class="fragment">Making changes based on results</li>
+        <li class="fragment">You want to <span class="highlight">iterate as fast as possible!</span></li>
+      </ul>
+    </li>
+  </ul>
+
+</div>
+
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+## Overview
+
+1. Labtech demo: iterating faster
+2. Labtech's features and design
+3. Comparison to related tools
           </textarea>
         </section>
 
@@ -153,16 +222,7 @@
 
           <section data-markdown>
             <textarea data-template>
-## A Single Experiment
-
-<div class="tasks">
-  <div class="task-line">
-    <div class="task">
-      <div class="task-progress fragment" data-animation-name="task-progress-1"></div>
-      <div class="task-label">experiment(c=1)</div>
-    </div>
-  </div>
-</div>
+### A Single Experiment
 
 <!--
      from sklearn.datasets import fetch_20newsgroups
@@ -171,9 +231,9 @@
      from sklearn.metrics import accuracy_score
 -->
 
-<div style="font-size: 0.85em;">
+<div style="font-size: 0.76em;">
 
-```python [|2-4|6-9|1,11-14|16-17]
+<pre><code data-trim data-noescape class="python language-python" data-fragment-index="1" data-line-numbers="|2-4|6-9|1,11-14|16-17|19">
 def experiment(c: int):
     # Load train and test datasets
     txt_train = fetch_20newsgroups(subset='train')
@@ -191,9 +251,21 @@ def experiment(c: int):
 
     # Evaluate classifier accuracy
     return accuracy_score(txt_test.target, target_pred)
-```
+
+experiment(c=1)
+</code></pre>
 
 </div>
+
+<div class="tasks fragment" data-fragment-index="10">
+  <div class="task-line">
+    <div class="task">
+      <div class="task-progress fragment" data-fragment-index="11" data-animation-name="task-progress-1"></div>
+      <div class="task-label">experiment(c=1)</div>
+    </div>
+  </div>
+</div>
+
             </textarea>
           </section>
 
@@ -530,24 +602,24 @@ results = lab.run_tasks(experiments)
   <div class="task-line">
     <div class="arrow" style="top: 75px; left: 284px; width: 65px; transform: rotate(0.375turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
     <div style="width: 30%;"></div>
-    <div class="task cached" style="width: 60%;">
-      <div class="task-label">Experiment(seed=1)</div>
+    <div class="task fragment cached" data-fragment-index="0" style="width: 60%;">
+      <div class="task-label">ClassificationTask(c=0.01)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="arrow" style="top: 27.5px; left: 295px; width: 65px; transform: rotate(0.5turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
-    <div class="task cached" style="width: 30%;">
-      <div class="task-label">Foo()</div>
+    <div class="task fragment cached" data-fragment-index="0" style="width: 30%;">
+      <div class="task-label">BowTask()</div>
     </div>
-    <div class="task cached" style="width: 60%;">
-      <div class="task-label">Experiment(seed=2)</div>
+    <div class="task fragment cached" data-fragment-index="0" style="width: 60%;">
+      <div class="task-label">ClassificationTask(c=1)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="arrow" style="top: -20px; left: 284px; width: 65px; transform: rotate(0.625turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
     <div style="width: 30%;"></div>
-    <div class="task cached" style="width: 60%;">
-      <div class="task-label">Experiment(seed=3)</div>
+    <div class="task fragment cached" data-fragment-index="0" style="width: 60%;">
+      <div class="task-label">ClassificationTask(c=100)</div>
     </div>
   </div>
   <div class="task-line">
@@ -555,18 +627,18 @@ results = lab.run_tasks(experiments)
     <div style="width: 30%;"></div>
     <div class="task" style="width: 60%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5b"></div>
-      <div class="task-label">Experiment(seed=3)</div>
+      <div class="task-label">ClassificationTask(c=1000)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="arrow" style="top: 27.5px; left: 295px; width: 65px; transform: rotate(0.5turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
     <div class="task" style="width: 30%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5a"></div>
-      <div class="task-label">Foo()</div>
+      <div class="task-label">BowTask()</div>
     </div>
     <div class="task" style="width: 60%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5c"></div>
-      <div class="task-label">Experiment(seed=3)</div>
+      <div class="task-label">ClassificationTask(c=1)</div>
     </div>
   </div>
   <div class="task-line">
@@ -583,23 +655,30 @@ results = lab.run_tasks(experiments)
 
           <section data-markdown>
             <textarea data-template>
-## Results Caching in Labtech
+## Result Caching in Labtech
             </textarea>
           </section>
 
           <section data-markdown>
             <textarea data-template>
-## Demo
+## Finding Cached Results
             </textarea>
           </section>
 
         </section>
 
         <section>
-## Taking it to Extremes
 
-* 100s of tasks
+          <section data-markdown>
+            <textarea data-template>
+
+# Taking it Further
+
+* Manage 100s of tasks
 * Scale up in the cloud
+
+            </textarea>
+          </section>
         </section>
 
         <section data-markdown>
@@ -641,7 +720,7 @@ results = lab.run_tasks(experiments)
      // - https://revealjs.com/config/
      Reveal.initialize({
        hash: true,
-       controls: false,
+       /* controls: false, */
 
        // Learn about plugins: https://revealjs.com/plugins/
        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
