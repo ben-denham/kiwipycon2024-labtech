@@ -185,14 +185,6 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
         </li>
       </ul>
     </li>
-    <li class="fragment">
-      <strong>Essence:</strong> <span class="highlight">Interactive</span>
-      <ul>
-        <li class="fragment">Closely monitoring execution</li>
-        <li class="fragment">Making changes based on results</li>
-        <li class="fragment">You want to <span class="highlight">iterate as fast as possible!</span></li>
-      </ul>
-    </li>
   </ul>
 
 </div>
@@ -202,10 +194,22 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
 
         <section data-markdown>
           <textarea data-template>
+### The Essence of an Experiment: <span class="highlight">Interactivity</span>
+
+* Closely monitoring execution
+* Adding/modifying experiments based on results
+* You need to <span class="highlight">iterate as fast as possible!</span>
+
+          </textarea>
+        </section>
+
+
+        <section data-markdown>
+          <textarea data-template>
 ## Overview
 
-1. Labtech demo: iterating faster
-2. Labtech's features and design
+1. Applying labtech to speed-up ML experiments
+2. More features for faster experiments
 3. Comparison to related tools
           </textarea>
         </section>
@@ -396,7 +400,7 @@ results = lab.run_tasks(experiments)
           <style>
            .tasks-3 .task-label {
                text-align: left;
-               padding-left: 10px;
+               padding-left: 30px;
            }
           </style>
 
@@ -408,19 +412,19 @@ results = lab.run_tasks(experiments)
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW --> Evaluate Classifier (c=0.01)</div>
+      <div class="task-label">Prepare BoW → Evaluate Classifier (c=0.01)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW --> Evaluate Classifier (c=1)</div>
+      <div class="task-label">Prepare BoW → Evaluate Classifier (c=1)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW --> Evaluate Classifier (c=100)</div>
+      <div class="task-label">Prepare BoW → Evaluate Classifier (c=100)</div>
     </div>
   </div>
 </div>
@@ -514,7 +518,7 @@ class ClassificationTask:
 
 ### Defining Task Types with Dependencies
 
-```python
+```python [|10,14]
 @lt.task
 class BowTask:
 
@@ -542,7 +546,7 @@ class ClassificationTask:
             <textarea data-template>
 ### Running Tasks with Dependencies
 
-```python
+```python [|3]
 experiments = [
     ClassificationTask(
         data_task=BowTask(),
@@ -550,7 +554,7 @@ experiments = [
     )
     for c in [0.01, 1, 100]
 ]
-lab = lt.Lab(max_workers=3)
+lab = lt.Lab()
 results = lab.run_tasks(experiments)
 ```
 
@@ -571,7 +575,10 @@ results = lab.run_tasks(experiments)
             <textarea data-template>
 ### Slow-Down #3: Re-running Tasks
 
-* TODO
+* Forgetting to save final results <!-- .element class="fragment" -->
+* Forgetting what configuration was used <!-- .element class="fragment" -->
+* Not saving intermediate results <!-- .element class="fragment" -->
+
             </textarea>
           </section>
 
@@ -656,12 +663,38 @@ results = lab.run_tasks(experiments)
           <section data-markdown>
             <textarea data-template>
 ## Result Caching in Labtech
-            </textarea>
-          </section>
 
-          <section data-markdown>
-            <textarea data-template>
-## Finding Cached Results
+```python
+lab = lt.Lab(storage='task_results/')
+```
+
+<div class="fragment">
+
+```python
+# Find cached tasks
+tasks = lab.cached_tasks([BowTask, ClassificationTask])
+```
+
+</div>
+
+<div class="fragment">
+
+```python
+# Load their results
+lab.run_tasks(tasks)
+```
+
+</div>
+
+<div class="fragment">
+
+```python
+# Uncache tasks
+lab.uncache_tasks(tasks)
+```
+
+</div>
+
             </textarea>
           </section>
 
@@ -671,14 +704,43 @@ results = lab.run_tasks(experiments)
 
           <section data-markdown>
             <textarea data-template>
+## Taking it Further
 
-# Taking it Further
-
+* Example of more complex task structure
+  * Model tasks
+  * Evaluation task
 * Manage 100s of tasks
-* Scale up in the cloud
-
             </textarea>
           </section>
+
+          <section data-markdown>
+            <textarea data-template>
+## Scaling up
+
+* Large cloud VM
+* Ray support in the works
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+## Extensible
+
+* Implement your own cache and storage
+* Soon implement your own concurrency backend
+            </textarea>
+          </section>
+
+          <section data-markdown>
+            <textarea data-template>
+## Other features
+
+* Context, shared memory on Linux with forking
+* Continue on failure
+* Task runtime stats
+            </textarea>
+          </section>
+
         </section>
 
         <section data-markdown>
@@ -695,7 +757,10 @@ results = lab.run_tasks(experiments)
 
         <section data-markdown>
           <textarea data-template>
-## Future
+## Call to Action
+
+* Try it out - docs
+* Feedback - does this fit what you do. What would make it fit?
           </textarea>
         </section>
 
