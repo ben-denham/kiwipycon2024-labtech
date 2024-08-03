@@ -13,8 +13,80 @@
     <!-- Theme used for syntax highlighted code -->
     <link rel="stylesheet" href="plugin/highlight/monokai.css">
 
-
     <style>
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: normal;
+         font-weight: 300;
+         src: url(fonts/ubuntu/Ubuntu-Light.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: italic;
+         font-weight: 300;
+         src: url(fonts/ubuntu/Ubuntu-LightItalic.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: normal;
+         font-weight: 400;
+         src: url(fonts/ubuntu/Ubuntu-Regular.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: italic;
+         font-weight: 400;
+         src: url(fonts/ubuntu/Ubuntu-Italic.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: normal;
+         font-weight: 500;
+         src: url(fonts/ubuntu/Ubuntu-Medium.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: italic;
+         font-weight: 500;
+         src: url(fonts/ubuntu/Ubuntu-MediumItalic.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: normal;
+         font-weight: 700;
+         src: url(fonts/ubuntu/Ubuntu-Bold.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu';
+         font-style: italic;
+         font-weight: 700;
+         src: url(fonts/ubuntu/Ubuntu-BoldItalic.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu Mono';
+         font-style: normal;
+         font-weight: 400;
+         src: url(fonts/ubuntu_mono/UbuntuMono-Regular.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu Mono';
+         font-style: italic;
+         font-weight: 400;
+         src: url(fonts/ubuntu_mono/UbuntuMono-Italic.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu Mono';
+         font-style: normal;
+         font-weight: 700;
+         src: url(fonts/ubuntu_mono/UbuntuMono-Bold.ttf);
+     }
+     @font-face {
+         font-family: 'Ubuntu Mono';
+         font-style: italic;
+         font-weight: 700;
+         src: url(fonts/ubuntu_mono/UbuntuMono-BoldItalic.ttf);
+     }
+
      :root {
          --r-background-color: #21125E;
          --r-link-color: #4618f1;
@@ -203,6 +275,86 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
           </textarea>
         </section>
 
+        <style>
+         table.bar-chart {
+             width: 100%;
+             font-size: 0.55em;
+         }
+         table.bar-chart td {
+             width: 30%;
+             text-align: center;
+         }
+         table.bar-chart .bar-container {
+             height: 300px;
+             vertical-align: bottom;
+             position: relative;
+         }
+         table.bar-chart .bar-container .bar {
+             width: 100px;
+             background: var(--r-link-color);
+             position: absolute;
+             bottom: 0;
+             left: 50%;
+             transform: translate(-50%, 0);
+         }
+
+         table.bar-chart .bar-container .bar.height-fragment.fragment {
+             opacity: 1;
+             visibility: visible;
+             height: 100%;
+             transition: all 0.5s linear;
+         }
+         table.bar-chart .bar-container .bar.height-fragment.fragment.height-fragment-a.visible {
+             height: 84% !important;
+             z-index: -1;
+         }
+         table.bar-chart .bar-container .bar.height-fragment.fragment.height-fragment-b.visible {
+             height: 18% !important;
+         }
+         table.bar-chart .bar-container .bar.height-fragment.fragment.height-fragment-c.visible {
+             height: 6% !important;
+         }
+
+         table.bar-chart .bar-container .bar.color-fragment.fragment {
+             opacity: 1;
+             visibility: visible;
+             transition: all 0.5s linear;
+         }
+         table.bar-chart .bar-container .bar.color-fragment.fragment.color-fragment-a.visible {
+             background: #285864 !important;
+         }
+
+         table.bar-chart img.emoji-icon {
+             margin: 0;
+             width: 100px;
+         }
+        </style>
+        <section>
+          <h3>Experiment Iterations</h3>
+          <table class="bar-chart">
+            <tr>
+              <td class="bar-container fragment" data-fragment-index="1">
+                <div class="fragment bar height-fragment height-fragment-a" style="height: 0%; display: flex; justify-content: center;" data-fragment-index="4">
+                  <img src="images/fifo.svg" style="margin: 0;">
+                </div>
+                <div class="bar fragment color-fragment color-fragment-a" style="height: 12%; background: #37FA71;" data-fragment-index="4"></div>
+              </td>
+              <td class="bar-container fragment" data-fragment-index="2">
+                <div class="bar" style="height: 42%; background: #EBC334; opacity: 0.3;"></div>
+                <div class="fragment bar height-fragment height-fragment-b" style="height: 42%; background: #EBC334;" data-fragment-index="4"></div>
+              </td>
+              <td class="bar-container fragment" data-fragment-index="3">
+                <div class="bar" style="height: 66%; background: #F5363F; opacity: 0.3;"></div>
+                <div class="fragment bar height-fragment height-fragment-c" style="height: 66%; background: #F5363F;" data-fragment-index="4"></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="fragment" data-fragment-index="1"><img class="emoji-icon" src="images/emoji_cool.svg"><br>0 &ndash; 5 mins</td>
+              <td class="fragment" data-fragment-index="2"><img class="emoji-icon" src="images/emoji_annoyed.svg"><br>5 mins &ndash; 1 hour</td>
+              <td class="fragment" data-fragment-index="3"><img class="emoji-icon" src="images/emoji_sleep.svg"><br>1 hour &ndash; 1+ days</td>
+            </tr>
+          </table>
+        </section>
 
         <section data-markdown>
           <textarea data-template>
@@ -235,10 +387,10 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
      from sklearn.metrics import accuracy_score
 -->
 
-<div style="font-size: 0.76em;">
+<div style="font-size: 0.72em;">
 
 <pre><code data-trim data-noescape class="python language-python" data-fragment-index="1" data-line-numbers="|2-4|6-9|1,11-14|16-17|19">
-def experiment(c: int):
+def experiment(leaf_max: int):
     # Load train and test datasets
     txt_train = fetch_20newsgroups(subset='train')
     txt_test = fetch_20newsgroups(subset='test')
@@ -249,14 +401,14 @@ def experiment(c: int):
     bow_test = vectorizer.transform(txt_test.data)
 
     # Train classifier to predict target labels from BoW
-    classifier = LogisticRegression(C=c)
+    classifier = RandomForestClassifier(max_leaf_nodes=leaf_max, random_state=1)
     classifier.fit(bow_train, txt_train.target)
     target_pred = classifier.predict(bow_test)
 
     # Evaluate classifier accuracy
     return accuracy_score(txt_test.target, target_pred)
 
-experiment(c=1)
+experiment(leaf_max=50)
 </code></pre>
 
 </div>
@@ -265,7 +417,7 @@ experiment(c=1)
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="11" data-animation-name="task-progress-1"></div>
-      <div class="task-label">experiment(c=1)</div>
+      <div class="task-label">experiment(leaf_max=50)</div>
     </div>
   </div>
 </div>
@@ -308,19 +460,19 @@ experiment(c=1)
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2a"></div>
-      <div class="task-label">experiment(c=0.01)</div>
+      <div class="task-label">experiment(leaf_max=10)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2b"></div>
-      <div class="task-label">experiment(c=1)</div>
+      <div class="task-label">experiment(leaf_max=50)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2c"></div>
-      <div class="task-label">experiment(c=100)</div>
+      <div class="task-label">experiment(leaf_max=90)</div>
     </div>
   </div>
 </div>
@@ -344,19 +496,19 @@ experiment(c=1)
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Experiment(c=0.01)</div>
+      <div class="task-label">Experiment(leaf_max=10)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Experiment(c=1)</div>
+      <div class="task-label">Experiment(leaf_max=50)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Experiment(c=100)</div>
+      <div class="task-label">Experiment(leaf_max=90)</div>
     </div>
   </div>
 </div>
@@ -368,29 +520,35 @@ experiment(c=1)
             <textarea data-template>
 ### Parallel tasks with Labtech
 
-```python [|3-8|10|12-13]
+<div style="font-size: 0.9em;">
+
+```python [|3-8|10-13|15-16]
 import labtech as lt
 
 @lt.task
 class Experiment:
-    c: int
+    leaf_max: int
 
     def run(self):
-        return experiment(c=self.c)
+        return experiment(leaf_max=self.leaf_max)
 
-experiments = [Experiment(c=c) for c in [0.01, 1, 100]]
+experiments = [
+    Experiment(leaf_max=leaf_max)
+    for leaf_max in [10, 50, 90]
+]
 
-lab = lt.Lab(max_workers=3)
+lab = lt.Lab(storage=None, max_workers=3)
 results = lab.run_tasks(experiments)
 ```
+
+</div>
 
             </textarea>
           </section>
 
-          <section data-markdown>
-            <textarea data-template>
-## Demo
-            </textarea>
+          <section>
+            <video data-autoplay loop src="images/labtech_concurrency_jupyter.webm"></video>
+            <video data-autoplay loop src="images/labtech_concurrency_console.webm"></video>
           </section>
 
         </section>
@@ -408,23 +566,23 @@ results = lab.run_tasks(experiments)
             <textarea data-template>
 ### Slow-Down #2: Redundancy in Tasks
 
-<div class="tasks tasks-3">
+<div class="tasks tasks-3" style="font-size: 0.9em;">
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW → Evaluate Classifier (c=0.01)</div>
+      <div class="task-label">Prepare BoW → Evaluate Classifier (leaf_max=10)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW → Evaluate Classifier (c=1)</div>
+      <div class="task-label">Prepare BoW → Evaluate Classifier (leaf_max=50)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW → Evaluate Classifier (c=100)</div>
+      <div class="task-label">Prepare BoW → Evaluate Classifier (leaf_max=90)</div>
     </div>
   </div>
 </div>
@@ -449,13 +607,13 @@ results = lab.run_tasks(experiments)
             <textarea data-template>
 ### Speed-Up #2: Share Dependencies
 
-<div class="tasks">
+<div class="tasks" style="font-size: 0.9em;">
   <div class="task-line">
     <div class="arrow" style="top: 75px; left: 237px; width: 65px; transform: rotate(0.375turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
     <div style="width: 25%;"></div>
     <div class="task" style="width: 65%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-4b"></div>
-      <div class="task-label">ClassificationTask(c=0.01)</div>
+      <div class="task-label">ClassificationTask(leaf_max=10)</div>
     </div>
   </div>
   <div class="task-line">
@@ -466,7 +624,7 @@ results = lab.run_tasks(experiments)
     </div>
     <div class="task" style="width: 65%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-4b"></div>
-      <div class="task-label">ClassificationTask(c=1)</div>
+      <div class="task-label">ClassificationTask(leaf_max=50)</div>
     </div>
   </div>
   <div class="task-line">
@@ -474,7 +632,7 @@ results = lab.run_tasks(experiments)
     <div style="width: 25%;"></div>
     <div class="task" style="width: 65%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-4b"></div>
-      <div class="task-label">ClassificationTask(c=100)</div>
+      <div class="task-label">ClassificationTask(leaf_max=90)</div>
     </div>
   </div>
 </div>
@@ -485,36 +643,7 @@ results = lab.run_tasks(experiments)
           <section data-markdown>
             <textarea data-template>
 
-<!--
-```python
-@lt.task
-class BowTask:
-
-    def run(self):
-        txt_train = fetch_20newsgroups(subset='train')
-        txt_test = fetch_20newsgroups(subset='test')
-
-        vectorizer = CountVectorizer(binary=True)
-        bow_train = vectorizer.fit_transform(txt_train.data)
-        bow_test = vectorizer.transform(txt_test.data)
-        return {'bow_train': bow_train, 'target_train': txt_train.target,
-                'bow_test': bow_test,   'target_test': txt_test.target}
-
-@lt.task
-class ClassificationTask:
-    data: BowTask
-    c: int
-
-    def run(self):
-        data = self.data.result
-        classifier = LogisticRegression(C=c)
-        classifier.fit(data['bow_train'], data['target_train'])
-        target_pred = classifier.predict(data['bow_test'])
-        return accuracy_score(data['target_test'], target_pred)
-```
--->
-
-<div style="font-size: 0.82em;">
+<div style="font-size: 0.74em;">
 
 ### Defining Task Types with Dependencies
 
@@ -524,15 +653,15 @@ class BowTask:
 
     def run(self):
         ...
-        return (bow_train, bow_test)
+        return (bow_train, bow_test, target_train, target_test)
 
 @lt.task
 class ClassificationTask:
     data_task: BowTask
-    c: int
+    leaf_max: int
 
     def run(self):
-        bow_train, bow_test = self.data_task.result
+        bow_train, bow_test, target_train, target_test = self.data_task.result
         ...
         return accuracy_score(...)
 ```
@@ -550,21 +679,19 @@ class ClassificationTask:
 experiments = [
     ClassificationTask(
         data_task=BowTask(),
-        c=c,
+        leaf_max=leaf_max,
     )
-    for c in [0.01, 1, 100]
+    for leaf_max in [10, 50, 90]
 ]
-lab = lt.Lab()
+lab = lt.Lab(storage=None)
 results = lab.run_tasks(experiments)
 ```
 
             </textarea>
           </section>
 
-          <section data-markdown>
-            <textarea data-template>
-## Demo
-            </textarea>
+          <section>
+            <video data-autoplay loop src="images/labtech_dependencies_jupyter.webm"></video>
           </section>
 
         </section>
@@ -605,12 +732,12 @@ results = lab.run_tasks(experiments)
             <textarea data-template>
 ### Speed-Up #3: Caching Task Results
 
-<div class="tasks">
+<div class="tasks" style="font-size: 0.75em;">
   <div class="task-line">
     <div class="arrow" style="top: 75px; left: 284px; width: 65px; transform: rotate(0.375turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
     <div style="width: 30%;"></div>
     <div class="task fragment cached" data-fragment-index="0" style="width: 60%;">
-      <div class="task-label">ClassificationTask(c=0.01)</div>
+      <div class="task-label">ClassificationTask(leaf_max=10)</div>
     </div>
   </div>
   <div class="task-line">
@@ -619,14 +746,14 @@ results = lab.run_tasks(experiments)
       <div class="task-label">BowTask()</div>
     </div>
     <div class="task fragment cached" data-fragment-index="0" style="width: 60%;">
-      <div class="task-label">ClassificationTask(c=1)</div>
+      <div class="task-label">ClassificationTask(leaf_max=50)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="arrow" style="top: -20px; left: 284px; width: 65px; transform: rotate(0.625turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
     <div style="width: 30%;"></div>
     <div class="task fragment cached" data-fragment-index="0" style="width: 60%;">
-      <div class="task-label">ClassificationTask(c=100)</div>
+      <div class="task-label">ClassificationTask(leaf_max=90)</div>
     </div>
   </div>
   <div class="task-line">
@@ -634,18 +761,18 @@ results = lab.run_tasks(experiments)
     <div style="width: 30%;"></div>
     <div class="task" style="width: 60%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5b"></div>
-      <div class="task-label">ClassificationTask(c=1000)</div>
+      <div class="task-label">ClassificationTask(leaf_max=1000)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="arrow" style="top: 27.5px; left: 295px; width: 65px; transform: rotate(0.5turn);"><div class="arrow-shaft"></div><div class="arrow-head"></div></div>
     <div class="task" style="width: 30%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5a"></div>
-      <div class="task-label">BowTask()</div>
+      <div class="task-label">EmbeddingsTask()</div>
     </div>
     <div class="task" style="width: 60%;">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-5c"></div>
-      <div class="task-label">ClassificationTask(c=1)</div>
+      <div class="task-label">ClassificationTask(leaf_max=50)</div>
     </div>
   </div>
   <div class="task-line">
