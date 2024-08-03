@@ -193,6 +193,17 @@
          color: #FFE500;
      }
 
+     ::-webkit-scrollbar {
+         width: 16px;
+     }
+     ::-webkit-scrollbar-track {
+         background: none;
+     }
+     ::-webkit-scrollbar-thumb {
+         background: #4E486B;
+         border-radius: 8px;
+     }
+
     </style>
 
   </head>
@@ -321,7 +332,7 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
              transition: all 0.5s linear;
          }
          table.bar-chart .bar-container .bar.color-fragment.fragment.color-fragment-a.visible {
-             background: #285864 !important;
+             /* background: #285864 !important; */
          }
 
          table.bar-chart img.emoji-icon {
@@ -833,47 +844,158 @@ lab.uncache_tasks(tasks)
             <textarea data-template>
 ## Taking it Further
 
-* Example of more complex task structure
-  * Model tasks
-  * Evaluation task
-* Manage 100s of tasks
+<div class="r-stack">
+  <img src="images/task-diagram-1.svg">
+  <img src="images/task-diagram-2.svg" class="fragment">
+  <img src="images/task-diagram-3.svg" class="fragment">
+</div>
+
+<aside class="notes">
+
+  * Labtech can generate diagrams like this
+
+</aside>
+
             </textarea>
           </section>
 
           <section data-markdown>
             <textarea data-template>
-## Scaling up
+### Manage <span class="highlight">hundreds of tasks</span> with a <span class="highlight">few lines of code</span>
 
-* Large cloud VM
-* Ray support in the works
+```python [1-4|6-19|21-30]
+data_tasks = [
+    BowTask(),
+    EmbeddingsTask(),
+]
+
+classifier_tasks = [
+    *[
+        RandomForestClassifierTask(
+            leaf_max=leaf_max,
+            tree_count=tree_count,
+        )
+        for leaf_max in [10, 20, 40, 80, 160]
+        for tree_count in range(10, 110, 10)
+    ],
+    *[
+        NaiveBayesTask(alpha=alpha)
+        for alpha in [0.1, 0.5, 1.0, 1.5, 2.0]
+    ],
+]
+
+experiments = [
+    EvaluationTask(
+        classification_task=ClassificationTask(
+            data_task=data_task,
+            classifier_task=classifier_task,
+        ),
+    )
+    for data_task in data_tasks
+    for classifier_task in classifier_tasks
+]
+```
+            </textarea>
+          </section>
+
+          <style>
+           .reveal table.pricing-table td {
+               vertical-align: top;
+               text-align: center;
+           }
+           .reveal table.pricing-table td:first-child {
+               vertical-align: middle;
+               border-right: 1px solid white;
+           }
+           .reveal table.pricing-table td img {
+               margin: 0;
+               height: 100px;
+           }
+          </style>
+          <section data-markdown>
+            <textarea data-template>
+## Scaling Up: To the Cloud!
+
+<p style="font-size: 0.5em;">(Disclaimer: Based on Spot Pricing in an East US Region - don't quote me on these prices!)</p>
+
+<table class="pricing-table">
+  <tr class="fragment">
+    <td>Azure</td>
+    <td colspan="2"><img src="images/azure-spot-instance.png"></td>
+  </tr>
+  <tr class="fragment">
+    <td>AWS</td>
+    <td><img src="images/aws-spot-size.png"></td>
+    <td><img src="images/aws-spot-pricing.png"></td>
+  </tr>
+  <tr class="fragment">
+    <td>Google</td>
+    <td><img src="images/google-spot-size.png"></td>
+    <td><img src="images/google-spot-pricing.png"><div style="font-size: 0.6em;">(~$1.8356/hour)</div></td>
+  </tr>
+</table>
+
             </textarea>
           </section>
 
           <section data-markdown>
             <textarea data-template>
-## Extensible
+## More Conveniences
 
-* Implement your own cache and storage
-* Soon implement your own concurrency backend
+* <!-- .element class="fragment" -->Always <span class="highlight">records task execution time</span>
+* <!-- .element class="fragment" -->Tasks can <span class="highlight">continue even when one fails</span>
+* <!-- .element class="fragment" --><span class="highlight">Conserve RAM</span> by sharing data between tasks (Linux-only for now)
             </textarea>
           </section>
 
+          <style>
+           .side-by-side-code {
+               display: flex;
+               font-size:
+           }
+           .side-by-side-code > div {
+               width: 48%;
+           }
+          </style>
           <section data-markdown>
             <textarea data-template>
-## Other features
+## Designed for Customisation
 
-* Context, shared memory on Linux with forking
-* Continue on failure
-* Task runtime stats
+<div class="side-by-side-code">
+
+<div class="fragment">
+
+```python
+class CloudStorage(Storage):
+    ...
+
+lab = lt.Lab(
+  storage=CloudStorage(...),
+)
+```
+
+</div>
+
+<div class="fragment">
+
+```python
+class CsvCache(BaseCache):
+    ...
+
+@lt.task(cache=CsvCache())
+class TableTask:
+    ...
+```
+
+</div>
+
+</div>
+
+(custom concurrency backends coming soon) <!-- .element class="fragment" -->
+
             </textarea>
           </section>
 
-        </section>
-
-        <section data-markdown>
-          <textarea data-template>
-## Design Considerations
-          </textarea>
         </section>
 
         <section data-markdown>
@@ -884,10 +1006,23 @@ lab.uncache_tasks(tasks)
 
         <section data-markdown>
           <textarea data-template>
-## Call to Action
+## Thanks for Listening! <!-- .element style="margin: 0;" -->
 
-* Try it out - docs
-* Feedback - does this fit what you do. What would make it fit?
+<img src="images/fifo-try-labtech.svg" style="margin: 0;">
+
+<div style="font-size: 0.85em;">
+  <div><code>pip install labtech</code></div>
+  <div><a style="color: white;" href="https://ben-denham.github.io/labtech">ben-denham.github.io/labtech</a></div>
+  <div style="margin-top: 20px;" class="fragment">
+    <span class="highlight">I'd love to hear your feedback!</span>
+    <ul>
+      <li>Does labtech fit how you work?</li>
+      <li>What would make it fit?</li>
+    </ul>
+  </div>
+</div>
+
+</div>
           </textarea>
         </section>
 
