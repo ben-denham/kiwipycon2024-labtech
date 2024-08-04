@@ -193,6 +193,11 @@
          color: #FFE500;
      }
 
+     .reveal video {
+         border: 7px solid #8F8F8F;
+         border-radius: 5px;
+     }
+
      ::-webkit-scrollbar {
          width: 16px;
      }
@@ -380,6 +385,26 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
         <section>
 
           <style>
+           /* See: https://css-tricks.com/snippets/css/css-triangle/ */
+           .experiment-steps {
+               display: flex;
+               margin: 10px 0;
+           }
+           .experiment-steps .experiment-step {
+               height: 60px;
+               width: 230px;
+               line-height: 60px;
+               background: url(images/chevron.svg);
+               background-size: 100% 100%;
+               color: black;
+               font-weight: bold;
+               font-size: 0.9em;
+               padding-left: 15px;
+           }
+           .experiment-steps .experiment-step.current-fragment {
+               background-image: url(images/chevron-active.svg);
+           }
+
            @keyframes task-progress-1 {
                0% { width: 0%; }
                80% { width: 100%; }
@@ -391,12 +416,12 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
             <textarea data-template>
 ### A Single Experiment
 
-<!--
-     from sklearn.datasets import fetch_20newsgroups
-     from sklearn.feature_extraction.text import CountVectorizer
-     from sklearn.linear_model import LogisticRegression
-     from sklearn.metrics import accuracy_score
--->
+<div class="experiment-steps">
+  <div class="experiment-step fragment" data-fragment-index="1">Load</div>
+  <div class="experiment-step fragment" data-fragment-index="2">Prepare</div>
+  <div class="experiment-step fragment" data-fragment-index="3">Train</div>
+  <div class="experiment-step fragment" data-fragment-index="4">Evaluate</div>
+</div>
 
 <div style="font-size: 0.72em;">
 
@@ -406,7 +431,7 @@ def experiment(leaf_max: int):
     txt_train = fetch_20newsgroups(subset='train')
     txt_test = fetch_20newsgroups(subset='test')
 
-    # Transform text into "bag-of-words" (BoW)
+    # Prepare "bag-of-words" (BoW) representation of text
     vectorizer = CountVectorizer(binary=True)
     bow_train = vectorizer.fit_transform(txt_train.data)
     bow_test = vectorizer.transform(txt_test.data)
@@ -424,7 +449,7 @@ experiment(leaf_max=50)
 
 </div>
 
-<div class="tasks fragment" data-fragment-index="10">
+<div class="tasks fragment" style="margin: 10px 0;" data-fragment-index="5">
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="11" data-animation-name="task-progress-1"></div>
@@ -559,7 +584,7 @@ results = lab.run_tasks(experiments)
 
           <section>
             <video data-autoplay loop src="images/labtech_concurrency_jupyter.webm"></video>
-            <video data-autoplay loop src="images/labtech_concurrency_console.webm"></video>
+            <video class="fragment" data-autoplay loop src="images/labtech_concurrency_console.webm"></video>
           </section>
 
         </section>
@@ -581,19 +606,19 @@ results = lab.run_tasks(experiments)
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW → Evaluate Classifier (leaf_max=10)</div>
+      <div class="task-label">Load → Prepare → Train (leaf_max=10) → Evaluate</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW → Evaluate Classifier (leaf_max=50)</div>
+      <div class="task-label">Load → Prepare → Train (leaf_max=50) → Evaluate</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-3"></div>
-      <div class="task-label">Prepare BoW → Evaluate Classifier (leaf_max=90)</div>
+      <div class="task-label">Load → Prepare → Train (leaf_max=90) → Evaluate</div>
     </div>
   </div>
 </div>
@@ -844,10 +869,19 @@ lab.uncache_tasks(tasks)
             <textarea data-template>
 ## Taking it Further
 
-<div class="r-stack">
+<div class="fragment" data-fragment-index="3">
+
+```python
+from labtech.diagram import display_task_diagram
+display_task_diagram(experiments)
+```
+
+</div>
+
+<div class="r-stack" style="width: 80%; margin: auto;">
   <img src="images/task-diagram-1.svg">
-  <img src="images/task-diagram-2.svg" class="fragment">
-  <img src="images/task-diagram-3.svg" class="fragment">
+  <img src="images/task-diagram-2.svg" class="fragment" data-fragment-index="1">
+  <img src="images/task-diagram-3.svg" class="fragment" data-fragment-index="2">
 </div>
 
 <aside class="notes">
@@ -1014,7 +1048,7 @@ class TableTask:
   <div><code>pip install labtech</code></div>
   <div><a style="color: white;" href="https://ben-denham.github.io/labtech">ben-denham.github.io/labtech</a></div>
   <div style="margin-top: 20px;" class="fragment">
-    <span class="highlight">I'd love to hear your feedback!</span>
+    <h3 class="highlight">I'd love to hear your feedback!</h3>
     <ul>
       <li>Does labtech fit how you work?</li>
       <li>What would make it fit?</li>
@@ -1066,6 +1100,25 @@ class TableTask:
            const sheet = window.document.styleSheets[0];
            const style = `<style>.${className}.visible { animation-name: ${animationName}; }</style>`
            $('html > head').append(style);
+         });
+
+         /* See: https://github.com/hakimel/reveal.js/issues/1289 */
+         // utility function that excepts a fragmentshown or fragmenthidden event and returns a boolean indicating whether or not
+         // the fragment is a video
+         const isVideoFragment = (event) => event.fragment.nodeName === 'VIDEO';
+
+         // Listens for the 'fragmentshown' event; if the fragment being shown is a video, play the video
+         Reveal.addEventListener('fragmentshown', (event) => {
+           if (isVideoFragment(event)) {
+             event.fragment.play();
+           }
+         });
+
+         // Listens for the 'fragmenthidden' event; if the fragment being hidden is a video, pause the video
+         Reveal.addEventListener('fragmenthidden', (event) => {
+           if (isVideoFragment(event)) {
+             event.fragment.pause();
+           }
          });
 
        });
