@@ -378,7 +378,7 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
 
 1. Applying labtech to speed-up ML experiments
 2. More features for faster experiments
-3. Comparison to related tools
+3. Comparison to similar tools
           </textarea>
         </section>
 
@@ -1071,18 +1071,18 @@ class TableTask:
   <img src="images/venn-3.svg" style="margin: 0 auto;" class="fragment" data-fragment-index="5">
 </div>
 
-<div class="venn-content" style="left: 100px;">
+<div class="venn-content" style="left: 105px;">
 <div class="venn-content-inner">
 
   <h4>Concurrency</h4>
 
-  <p class="fragment" data-fragment-index="1"><strong>Within-task:</strong> <code>sklearn</code>, etc.</p>
-
-  <p class="fragment" data-fragment-index="2"><strong>Local:</strong> <code>multiprocessing</code>, <code>concurrent.futures</code></p>
+  <p class="fragment" data-fragment-index="1"><strong>Local:</strong> <code>multiprocessing</code>, <code>concurrent.futures</code></p>
   <!-- Also: https://github.com/simoninireland/epyc -->
 
-  <p class="fragment" data-fragment-index="3"><strong>Distributed:</strong> Ray Core, Dask.distributed</p>
+  <p class="fragment" data-fragment-index="2"><strong>Distributed:</strong> Ray Core, Dask.distributed</p>
   <!-- Also: https://ipyparallel.readthedocs.io/en/latest/tutorial/task.html -->
+
+  <p class="fragment" data-fragment-index="3"><strong>Within-task:</strong> Ray Data, Dask.dataframe, <code>sklearn</code></p>
 
 </div>
 </div>
