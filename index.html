@@ -226,12 +226,22 @@
 <h2 style="font-size: 1.3em;"><span class="highlight">Concurrency</span> and <span class="highlight">caching</span> in Python for <span class="highlight">busy scientists</span></h2>
 
 ## Ben Denham - Software Engineer & Data Scientist  <!-- .element style="font-size: 0.8em;" -->
+
+<aside class="notes">
+
+  * Hi everyone, I'm Ben
+  * I'm going to share with you about labtech
+  * A tool I've developed to scratch my own itch for managing lots of computational experiments
+  * and I think you'll find it useful as well!
+
+</aside>
+
           </textarea>
         </section>
 
         <section data-markdown>
           <textarea data-template>
-## What is <span class="highlight">Labtech</span> ?
+## What is <span class="highlight">labtech</span> ?
 
 <div class="fragment">
 
@@ -241,9 +251,11 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
 
 <aside class="notes">
 
-  * Who
-  * Why
-  * What
+  * So what is labtech?
+  * At a high level: *read verbatim*
+  * Who - it's friendly - for scientists and other Python users who aren't primarily software engineers
+  * Why - work more efficiently
+  * What - computational experiments
 
 </aside>
           </textarea>
@@ -266,7 +278,7 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
       <ul>
         <li>
           Any <span class="highlight">task</span> run with <span class="highlight">many configurations</span>,
-          <br>often made up of <span class="highlight">multiple steps</span>.
+          <br>often made up of <span class="highlight">multiple steps</span>
         </li>
         <li class="fragment">
           E.g. A web-scraper run on many webpages
@@ -275,7 +287,13 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
     </li>
   </ul>
 
-</div>
+<aside class="notes">
+
+  * Some typical examples would be... (from slide)
+  * But technically, it could be any task that... (from slide)
+  * For example, even... (webscraping from slide)
+
+</aside>
 
           </textarea>
         </section>
@@ -287,6 +305,19 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
 * Closely monitoring execution
 * Adding/modifying experiments based on results
 * You need to <span class="highlight">iterate as fast as possible!</span>
+
+<aside class="notes">
+
+  * But the essence of experiments that labtech helps most with is
+    summed up with one word: Interactivity
+  * You don't know whether the ideas you're trying will work
+  * ...so you keep a close eye while they're running
+  * You're going to change direction based on the results
+  * ..modifying experiment configurations or coming up with new ideas
+  * and you want to move fast
+  * ...reducing the time between asking a question and getting an answer
+
+</aside>
 
           </textarea>
         </section>
@@ -345,7 +376,8 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
              width: 100px;
          }
         </style>
-        <section>
+        <section data-markdown>
+          <textarea data-template>
           <h3>Experiment Iterations</h3>
           <table class="bar-chart">
             <tr>
@@ -370,6 +402,21 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
               <td class="fragment" data-fragment-index="3"><img class="emoji-icon" src="images/emoji_sleep.svg"><br>1 hour &ndash; 1+ days</td>
             </tr>
           </table>
+
+<aside class="notes">
+
+  * Because while some of your experiment ideas will only take a few minutes to test
+  * ...others might take more time - long enough you risk losing your train of thought
+  * ...up to an hour particularly annoys me, because it isn't even long enough to be worth switching context to another task
+  * ...but then there are experiments where you might just have to wait up to a day or more to see results
+  * Labtech's job is to make it faster to test more of your ideas by both
+  * ...reducing unnecessary computation
+  * ...and helping you better manage your experiments
+    * Aside: E.g. know what you've already run, know what's taking too long, extend experiment code
+
+</aside>
+
+          </textarea>
         </section>
 
         <section data-markdown>
@@ -377,8 +424,15 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
 ## Overview
 
 1. Applying labtech to speed-up ML experiments
-2. More features for faster experiments
-3. Comparison to similar tools
+2. More labtech features for faster experiments
+3. How labtech compares to similar tools
+
+<aside class="notes">
+
+  * So over the rest of this talk, we're going to look at...
+
+</aside>
+
           </textarea>
         </section>
 
@@ -414,7 +468,7 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
 
           <section data-markdown>
             <textarea data-template>
-### A Single Experiment
+#### Example: Machine Learning Experiments
 
 <div class="experiment-steps">
   <div class="experiment-step fragment" data-fragment-index="1">Load</div>
@@ -426,7 +480,7 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
 <div style="font-size: 0.72em;">
 
 <pre><code data-trim data-noescape class="python language-python" data-fragment-index="1" data-line-numbers="|2-4|6-9|1,11-14|16-17|19">
-def experiment(leaf_max: int):
+def run_experiment(leaf_max: int):
     # Load train and test datasets
     txt_train = fetch_20newsgroups(subset='train')
     txt_test = fetch_20newsgroups(subset='test')
@@ -436,7 +490,7 @@ def experiment(leaf_max: int):
     bow_train = vectorizer.fit_transform(txt_train.data)
     bow_test = vectorizer.transform(txt_test.data)
 
-    # Train classifier to predict target labels from BoW
+    # Train classifier to predict topic labels from BoW
     classifier = RandomForestClassifier(max_leaf_nodes=leaf_max, random_state=1)
     classifier.fit(bow_train, txt_train.target)
     target_pred = classifier.predict(bow_test)
@@ -444,7 +498,7 @@ def experiment(leaf_max: int):
     # Evaluate classifier accuracy
     return accuracy_score(txt_test.target, target_pred)
 
-experiment(leaf_max=50)
+run_experiment(leaf_max=50)
 </code></pre>
 
 </div>
@@ -453,10 +507,25 @@ experiment(leaf_max=50)
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="11" data-animation-name="task-progress-1"></div>
-      <div class="task-label">experiment(leaf_max=50)</div>
+      <div class="task-label">run_experiment(leaf_max=50)</div>
     </div>
   </div>
 </div>
+
+<aside class="notes">
+
+  * So let's look at how labtech can speed up some machine learning experiments
+  * Here is our experiment code without labtech
+  * The details aren't important
+  * ... but at a high-level, during each experiment, we:
+    * load a dataset of text from online forum
+    * prepare a numerical bag-of-words representation of the text
+    * then train a classifier to assign a topic label to a forum message
+      * the experiment also takes a `leaf_max` parameter that affects how the classifier is trained
+    * and finally evaluate the accuracy of the classifier
+  * The key point to understand: each experiment takes a while to run
+
+</aside>
 
             </textarea>
           </section>
@@ -490,28 +559,41 @@ experiment(leaf_max=50)
 
           <section data-markdown>
             <textarea data-template>
-### Slow-Down #1: Variable Permutations
+### Slow-Down #1: Parameter Permutations
+
+```python
+for leaf_max in [10, 50, 90]:
+    run_experiment(leaf_max=leaf_max)
+```
+
 
 <div class="tasks tasks-2">
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2a"></div>
-      <div class="task-label">experiment(leaf_max=10)</div>
+      <div class="task-label">run_experiment(leaf_max=10)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2b"></div>
-      <div class="task-label">experiment(leaf_max=50)</div>
+      <div class="task-label">run_experiment(leaf_max=50)</div>
     </div>
   </div>
   <div class="task-line">
     <div class="task">
       <div class="task-progress fragment" data-fragment-index="1" data-animation-name="task-progress-2c"></div>
-      <div class="task-label">experiment(leaf_max=90)</div>
+      <div class="task-label">run_experiment(leaf_max=90)</div>
     </div>
   </div>
 </div>
+
+<aside class="notes">
+
+  * While running experiment permutations with varied parameters, we'll very quickly notice our first speed impediment
+  * Running lots of experiments one-after-another is going to take a while!
+
+</aside>
 
             </textarea>
           </section>
@@ -549,12 +631,18 @@ experiment(leaf_max=50)
   </div>
 </div>
 
+<aside class="notes">
+
+  * Labtech makes it easy to run as many experiments at the same time as our computer can handle
+
+</aside>
+
             </textarea>
           </section>
 
           <section data-markdown>
             <textarea data-template>
-### Parallel tasks with Labtech
+### Parallel tasks with labtech
 
 <div style="font-size: 0.9em;">
 
@@ -566,7 +654,7 @@ class Experiment:
     leaf_max: int
 
     def run(self):
-        return experiment(leaf_max=self.leaf_max)
+        return run_experiment(leaf_max=self.leaf_max)
 
 experiments = [
     Experiment(leaf_max=leaf_max)
@@ -579,12 +667,38 @@ results = lab.run_tasks(experiments)
 
 </div>
 
+<aside class="notes">
+
+  * And here's what that looks like
+  * We define a Task class for our experiment that just needs to run our original experiment code
+    * Similar to a dataclass, we declare any parameters of the experiment as attributes
+  * Then we create an instance of our Experiment Task for each permutation that we want to run
+  * Then we instruct labtech to run the experiment tasks
+  * Setting `max_workers` tells labtech to run up to 3 tasks at a time
+    * ...perfect for a typical 4-core CPU
+
+</aside>
+
+
             </textarea>
           </section>
 
-          <section>
+          <section data-markdown>
+            <textarea data-template>
             <video data-autoplay loop src="images/labtech_concurrency_jupyter.webm"></video>
             <video class="fragment" data-autoplay loop src="images/labtech_concurrency_console.webm"></video>
+            </textarea>
+
+<aside class="notes">
+
+  * When we run these experiments:
+    * labtech shows a progress bar (courtesy of the tqdm library)
+    * And shows each running task along with the CPU and RAM it's using
+    * Tasks can also log messages to be displayed
+  * This works in Jupyter notebooks, as well as at the command line
+
+</aside>
+
           </section>
 
         </section>
@@ -597,8 +711,7 @@ results = lab.run_tasks(experiments)
                padding-left: 30px;
            }
           </style>
-
-<section data-markdown>
+          <section data-markdown>
             <textarea data-template>
 ### Slow-Down #2: Redundancy in Tasks
 
@@ -623,8 +736,17 @@ results = lab.run_tasks(experiments)
   </div>
 </div>
 
+<aside class="notes">
+
+  * So now that you have your experiments running in parallel
+  * ...the next slow-down you might notice is how some computation gets repeated across experiments
+  * ...such as in these Load and Prepare steps before the parameter variations affect the training and evaluation
+
+</aside>
+
             </textarea>
           </section>
+
           <style>
            @keyframes task-progress-4a {
                0% { width: 0%; }
@@ -673,6 +795,13 @@ results = lab.run_tasks(experiments)
   </div>
 </div>
 
+<aside class="notes">
+
+  * What we'd like to have is a single task to prepare the bag-of-words data once
+  * ...and have classification task permutations share the result
+
+</aside>
+
             </textarea>
           </section>
 
@@ -704,6 +833,15 @@ class ClassificationTask:
 
 </div>
 
+<aside class="notes">
+
+  * Here's what that looks like in labtech
+  * We define two task types
+  * And we make the first task a dependency of the send task by declaring it as a parameter
+  * We can then access the first task's result when the second task is running
+
+</aside>
+
             </textarea>
           </section>
 
@@ -723,11 +861,28 @@ lab = lt.Lab(storage=None)
 results = lab.run_tasks(experiments)
 ```
 
+<aside class="notes">
+
+  * We declare our experiment permutations as before
+  * ...except this time, we create a bag-of-words task and pass it through as a parameter
+  * We actually create multiple bag-of-words tasks in this for-loop,
+  * ...but labtech knows they are the same because they have the same parameters (or none in this case)
+
+</aside>
+
             </textarea>
           </section>
 
-          <section>
+          <section data-markdown>
+            <textarea data-template>
             <video data-autoplay loop src="images/labtech_dependencies_jupyter.webm"></video>
+
+<aside class="notes">
+
+  * And when we run the experiments, we get a progress bar for each type of task
+
+</aside>
+            </textarea>
           </section>
 
         </section>
@@ -739,8 +894,20 @@ results = lab.run_tasks(experiments)
 ### Slow-Down #3: Re-running Tasks
 
 * Forgetting to save final results <!-- .element class="fragment" -->
-* Forgetting what configuration was used <!-- .element class="fragment" -->
+* Forgetting what parameters were used <!-- .element class="fragment" -->
 * Not saving intermediate results <!-- .element class="fragment" -->
+
+<aside class="notes">
+
+  * Now that we have tasks sharing dependencies and running in parallel,
+  * ...the final slow-down we'll look at is all the time you can spend re-running tasks you've run before
+  * This might happen for various reasons...
+    * Forgetting to save the results from an experiment you ran
+    * Even if you save the result, you might forget to record the parameters you used
+    * And finally, sometimes you want to change a later step in an experiment,
+      ...but then you have to re-run the whole experiment because you didn't save intermediate results after earlier steps
+
+</aside>
 
             </textarea>
           </section>
@@ -820,12 +987,24 @@ results = lab.run_tasks(experiments)
     </div>
   </div>
 </div>
+
+<aside class="notes">
+
+  * Labtech solves this problem by *always* saving the results of tasks along with the parameters used
+  * So when we construct a bunch of tasks and run them
+  * ...labtech will load the results of any tasks it's run before from its cache
+  * ...and only execute the new tasks
+  * For example, here we have a new Embeddings Task to prepare a different numeric representation of our text data,
+  * ...and that can run at the same time as any Classification task that still depends on the cached bag-of-words task
+
+</aside>
+
             </textarea>
           </section>
 
           <section data-markdown>
             <textarea data-template>
-## Result Caching in Labtech
+## Result caching in labtech
 
 ```python
 lab = lt.Lab(storage='task_results/')
@@ -858,6 +1037,16 @@ lab.uncache_tasks(tasks)
 
 </div>
 
+<aside class="notes">
+
+  * This is as simple as telling labtech what directory to store its cache in
+  * We can even ask labtech to fully re-construct Task objects for any results it has cached
+  * And we load their cached results by simply asking labtech to run them
+  * Finally, we can also ask labtech to uncache specific results when necessary
+  * ...such as if we've changed the code that a task runs
+
+</aside>
+
             </textarea>
           </section>
 
@@ -867,7 +1056,7 @@ lab.uncache_tasks(tasks)
 
           <section data-markdown>
             <textarea data-template>
-## Taking it Further
+### Continuing our Experimentation
 
 <div class="fragment" data-fragment-index="3">
 
@@ -886,7 +1075,11 @@ display_task_diagram(experiments)
 
 <aside class="notes">
 
-  * Labtech can generate diagrams like this
+  * We could continue modifying our experiments over time to handle more complexity
+    * We could make the type of classifier itself a task dependency of our classification task
+    * And we could move classifier evaluation into a separate task, allowing us to cache the classifier outputs themselves
+    * ...so that we can later run any kind of evaluation we come up with
+  * By the way, Labtech can generate a diagram of dependencies like this for any set of tasks
 
 </aside>
 
@@ -929,6 +1122,19 @@ experiments = [
     for classifier_task in classifier_tasks
 ]
 ```
+
+<aside class="notes">
+
+  * Even as our experiment permutations grow, labtech keeps the configuration easy to manage
+  * Here we define a list of tasks that prepare our dataset in different ways
+  * Then we define a list with multiple types of classifiers with varied parameters
+  * And finally we define each experiment as:
+    * ...an evaluation task
+    * ...run for a classification task
+    * ...with a given dataset and classifier
+
+</aside>
+
             </textarea>
           </section>
 
@@ -971,7 +1177,15 @@ experiments = [
 
 <aside class="notes">
 
-  * Emphasize how useful caching is on a spot instance
+  * Now to run your hundreds of experiments as fast as possible, you might think you need to pay for a big cluster of machines
+  * However, you can get pretty far with a single big virtual machine in the cloud:
+    * How about enough cores to run 96 tasks at the same time?
+    * How about 192 tasks?
+    * Or even 360 tasks?
+    * All for dollars an hour or less.
+  * Now we're looking at spot instances, which means your machine might be shutdown with no notice
+  * ...but that's not a big problem with labtech caching all your intermediate results!
+  * Just restart the machine and let labtech pick up from where it left off
 
 </aside>
 
@@ -985,6 +1199,17 @@ experiments = [
 * <!-- .element class="fragment" -->Always <span class="highlight">records task execution time</span>
 * <!-- .element class="fragment" -->Tasks can <span class="highlight">continue even when one fails</span>
 * <!-- .element class="fragment" --><span class="highlight">Conserve RAM</span> by sharing data between tasks (Linux-only for now)
+
+<aside class="notes">
+
+* I've also packed labtech with a bunch of other conveniences I found myself wanting
+* It always saves how long a task took to run
+* It can continue running other tasks even when one fails
+  * (useful if you're going to run it overnight)
+* And it can conserve RAM on Linux by sharing memory between tasks
+
+</aside>
+
             </textarea>
           </section>
 
@@ -1031,6 +1256,16 @@ class TableTask:
 
 </div>
 
+<aside class="notes">
+
+  * Finally, labtech is designed for you to customise
+  * You can define a custom storage backend to send cached results wherever you want, like cloud storage
+  * And while it defaults to saving results with Python's built-in object pickling system,
+  * ...you can define a custom cache type to change the format
+  * For example, you might want to save tabular results as CSVs or another tabular file type
+
+</aside>
+
             </textarea>
           </section>
 
@@ -1040,7 +1275,15 @@ class TableTask:
 
           <section data-markdown>
             <textarea data-template>
-## How does Labtech compare to other tools?
+## How does labtech compare to other tools?
+
+<aside class="notes">
+
+  * Right, now we've seen what labtech can do
+  * ...how does this compare to other tools out there?
+
+</aside>
+
             </textarea>
           </section>
 
@@ -1116,6 +1359,22 @@ class TableTask:
 </div>
 
 </div>
+
+<aside class="notes">
+
+  * Two kinds of tools that can similarly help run experiments: tools for concurrency and tools for tracking experiments
+  * Python has lots of tools for concurrency:
+    * On your local machine: concurrent futures in the Python standard library makes it easy to run a function many times across multiple processes
+    * Ray and Dask can similarly let you run a function across many machines
+    * And some data processing libraries have built-in support for distributing parts of a task across processes or machines,
+    * ...these in particular actually play quite nicely in conjunction with the tools above or with labtech
+  * There are also many tools for tracking and visualising experiments
+    * These are more focussed on capturing the results than they are about preparing the experiments
+    * Labtech can also play nicely with these specialised tracking tools, and has built-in support for logging experiment parameters and metrics to mlflow
+  * However, none of these provide a complete solution for managing experiments
+  * I'd class labtech as an *Experiment Management* tool that supports both concurrency and experiment tracking
+
+</aside>
 
             </textarea>
           </section>
@@ -1202,14 +1461,14 @@ class TableTask:
       <td class="neutral fragment" data-fragment-index="1">YAML + CLI</td>
     </tr>
     <tr>
-      <td>Joblib</td>
+      <td>joblib</td>
       <td>✅</td>
       <td>❌</td> <!-- Parallel, but no DAG: https://joblib.readthedocs.io/en/stable/why.html -->
       <td>✅</td> <!-- https://joblib.readthedocs.io/en/stable/memory.html -->
       <td class="positive fragment" data-fragment-index="1">Python</td>
     </tr>
     <tr class="highlight">
-      <td>Labtech</td>
+      <td>labtech</td>
       <td>✅</td>
       <td>✅</td>
       <td>✅</td>
@@ -1220,14 +1479,22 @@ class TableTask:
 
 <aside class="notes">
 
-  * All support concurrency
-  * A lot of these tools are very focussed on ML use cases.
-  * As far as I can tell, W&B Launch is quite limited in its dependencies
-    and caching capabilities.
-  * Lightweight: Not just friendliness, but flexibility to have
-    dynamic pipeline structures (e.g. optional tasks) - limits interactivity.
-  * I could imagine using Ploomber or DVC for more serious experiment management across
-    a team.
+  * There are quite a few other experiment management tools out there,
+    ...I've tried to represent all the major ones here
+  * From my review of these tools, most have good support for the three speed-ups we achieved with labtech earlier
+  * However, a big differentiator to me is how lightweight they are to use
+  * A lot of these tools require you to define a pipeline of experiment steps in a YAML configuration file
+    * ...and some even require you to set up a server
+  * By letting you manage your experiments directly from Python code,
+    * ...I'd argue that labtech is not just simpler to get up and running with
+    * ...but that it gives you more flexibility to have dynamic experiments
+    * ...like pipelines with optional steps
+  * I could definitely imagine using a tool like Ploomber or DVC
+    * ...for more serious experiment management across a team
+    * ...or running a regularly scheduled data pipeline,
+    * ...but I'd prefer labtech for dynamic and interactive experimentation.
+  * It's also worth mentioning that a lot of these tools are very focussed on ML use cases,
+    * ...while labtech tries to be more of a general purpose tool
 
 </aside>
 
@@ -1247,6 +1514,19 @@ class TableTask:
   * Multi-interpreter (Python 3.13?)
   * Custom concurrency backends
 * <!-- .element class="fragment" --> <span class="highlight">Help users experiment faster</span>
+
+<aside class="notes">
+
+  * Looking ahead, there's a few things I'd like to add into labtech
+  * Improved memory sharing, especially looking at what's possible beyond Linux
+  * More options for concurrency:
+    * Distributing across many machines, probably leveraging Ray or Dask
+    * Maybe multi-interpreter concurrency when that gets better support in Python
+    * And making it possible to define your own concurrency backends
+  * Overall, the goal is to help users experiment faster, so let me know what would most help you
+
+</aside>
+
           </textarea>
         </section>
 
@@ -1269,6 +1549,16 @@ class TableTask:
 </div>
 
 </div>
+
+<aside class="notes">
+
+  * So thanks very much for listening
+  * If you've liked what you've seen, go give labtech a go, or give it a star on GitHub
+  * And I'd love to hear your feedback, so come talk to me in one of the breaks
+  * So thanks again, and I'd be happy to take any questions
+
+</aside>
+
           </textarea>
         </section>
 
