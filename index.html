@@ -323,83 +323,102 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
         </section>
 
         <style>
-         table.bar-chart {
-             width: 100%;
-             font-size: 0.55em;
+         .horizontal-bar-chart td {
+             vertical-align: middle;
+             height: 150px;
          }
-         table.bar-chart td {
-             width: 30%;
+         .horizontal-bar-chart td:first-child {
+             width: 20%;
+         }
+         .horizontal-bar-chart .stacked-bar {
+             display: flex;
+         }
+         .horizontal-bar-chart .stacked-bar-inner {
+             height: 80px;
+         }
+         .horizontal-bar-chart .stacked-bar-header {
              text-align: center;
+             font-size: 0.6em;
          }
-         table.bar-chart .bar-container {
-             height: 300px;
-             vertical-align: bottom;
-             position: relative;
-         }
-         table.bar-chart .bar-container .bar {
+         .horizontal-bar-chart .stacked-bar-header .emoji-icon {
              width: 100px;
-             background: var(--r-link-color);
-             position: absolute;
-             bottom: 0;
-             left: 50%;
-             transform: translate(-50%, 0);
-         }
-
-         table.bar-chart .bar-container .bar.height-fragment.fragment {
-             opacity: 1;
-             visibility: visible;
-             height: 100%;
-             transition: all 0.5s linear;
-         }
-         table.bar-chart .bar-container .bar.height-fragment.fragment.height-fragment-a.visible {
-             height: 84% !important;
-             z-index: -1;
-         }
-         table.bar-chart .bar-container .bar.height-fragment.fragment.height-fragment-b.visible {
-             height: 18% !important;
-         }
-         table.bar-chart .bar-container .bar.height-fragment.fragment.height-fragment-c.visible {
-             height: 6% !important;
-         }
-
-         table.bar-chart .bar-container .bar.color-fragment.fragment {
-             opacity: 1;
-             visibility: visible;
-             transition: all 0.5s linear;
-         }
-         table.bar-chart .bar-container .bar.color-fragment.fragment.color-fragment-a.visible {
-             /* background: #285864 !important; */
-         }
-
-         table.bar-chart img.emoji-icon {
              margin: 0;
-             width: 100px;
+         }
+
+         .horizontal-bar-chart .fragment.width-fragment {
+             opacity: 1;
+             visibility: visible;
+             width: 0%;
+             border-color: ;
+             transition: all 0.5s linear;
+         }
+         .horizontal-bar-chart .fragment.width-fragment.visible {
+             width: 100%;
+             border-color: black;
+         }
+
+         .horizontal-bar-chart .no-row-border td {
+             border-bottom: 0;
+         }
+         .horizontal-bar-chart .top-row-border.visible td {
+             border-top: 1px solid;
          }
         </style>
         <section data-markdown>
           <textarea data-template>
           <h3>Experiment Iterations</h3>
-          <table class="bar-chart">
+          <table class="horizontal-bar-chart">
             <tr>
-              <td class="bar-container fragment" data-fragment-index="1">
-                <div class="fragment bar height-fragment height-fragment-a" style="height: 0%; display: flex; justify-content: center;" data-fragment-index="4">
-                  <img src="images/fifo.svg" style="margin: 0;">
+              <th></th>
+              <th>
+                <div class="stacked-bar">
+                  <div class="fragment stacked-bar-header" data-fragment-index="1" style="width: 20%; transition-duration: 0.25s;">
+                    <img class="emoji-icon" src="images/emoji_cool.svg"><br>0 &ndash; 5 mins
+                  </div>
+                  <div class="fragment stacked-bar-header" data-fragment-index="2" style="width: 35%; transition-duration: 0.4375s;">
+                    <img class="emoji-icon" src="images/emoji_annoyed.svg"><br>5 mins &ndash; 1 hour
+                  </div>
+                  <div class="fragment stacked-bar-header" data-fragment-index="3" style="width: 45%; transition-duration: 0.5625s;">
+                    <img class="emoji-icon" src="images/emoji_sleep.svg"><br>1 hour &ndash; 1+ days
+                  </div>
                 </div>
-                <div class="bar fragment color-fragment color-fragment-a" style="height: 12%; background: #37FA71;" data-fragment-index="4"></div>
+              </th>
+            </tr>
+            <tr class="no-row-border">
+              <td>
+                Without labtech
               </td>
-              <td class="bar-container fragment" data-fragment-index="2">
-                <div class="bar" style="height: 42%; background: #EBC334; opacity: 0.3;"></div>
-                <div class="fragment bar height-fragment height-fragment-b" style="height: 42%; background: #EBC334;" data-fragment-index="4"></div>
-              </td>
-              <td class="bar-container fragment" data-fragment-index="3">
-                <div class="bar" style="height: 66%; background: #F5363F; opacity: 0.3;"></div>
-                <div class="fragment bar height-fragment height-fragment-c" style="height: 66%; background: #F5363F;" data-fragment-index="4"></div>
+              <td>
+                <div class="stacked-bar">
+                  <div class="stacked-bar-part" style="width: 20%;">
+                    <div class="stacked-bar-inner fragment width-fragment" data-fragment-index="1" style="background: #00C939; transition-duration: 0.25s;"></div>
+                  </div>
+                  <div class="stacked-bar-part" style="width: 35%;">
+                    <div class="stacked-bar-inner fragment width-fragment" data-fragment-index="2" style="background: #EBB800; transition-duration: 0.4375s;"></div>
+                  </div>
+                  <div class="stacked-bar-part" style="width: 45%;">
+                    <div class="stacked-bar-inner fragment width-fragment" data-fragment-index="3" style="background: #F5000C; transition-duration: 0.5625s;"></div>
+                  </div>
+                </div>
               </td>
             </tr>
-            <tr>
-              <td class="fragment" data-fragment-index="1"><img class="emoji-icon" src="images/emoji_cool.svg"><br>0 &ndash; 5 mins</td>
-              <td class="fragment" data-fragment-index="2"><img class="emoji-icon" src="images/emoji_annoyed.svg"><br>5 mins &ndash; 1 hour</td>
-              <td class="fragment" data-fragment-index="3"><img class="emoji-icon" src="images/emoji_sleep.svg"><br>1 hour &ndash; 1+ days</td>
+            <tr class="fragment top-row-border" data-fragment-index="4">
+              <td>
+                <img src="images/fifo.svg" style="margin: 0;">
+              </td>
+              <td>
+                <div class="stacked-bar fragment width-fragment" data-fragment-index="5" style="transition-duration: 1.25s;">
+                  <div class="stacked-bar-part" style="width: 70%;">
+                    <div class="stacked-bar-inner" style="background: #00C939;"></div>
+                  </div>
+                  <div class="stacked-bar-part" style="width: 20%;">
+                    <div class="stacked-bar-inner" style="background: #EBB800;"></div>
+                  </div>
+                  <div class="stacked-bar-part" style="width: 10%;">
+                    <div class="stacked-bar-inner" style="background: #F5000C;"></div>
+                  </div>
+                </div>
+              </td>
             </tr>
           </table>
 
@@ -413,6 +432,7 @@ A <span class="highlight fragment">friendly</span> Python library for <span clas
   * ...reducing unnecessary computation
   * ...and helping you better manage your experiments
     * Aside: E.g. know what you've already run, know what's taking too long, extend experiment code
+  * With labtech, you're able to stay in a flow state longer and be more productive
 
 </aside>
 
@@ -687,18 +707,18 @@ results = lab.run_tasks(experiments)
             <textarea data-template>
             <video data-autoplay loop src="images/labtech_concurrency_jupyter.webm"></video>
             <video class="fragment" data-autoplay loop src="images/labtech_concurrency_console.webm"></video>
+
+            <aside class="notes">
+
+              * When we run these experiments:
+              * labtech shows a progress bar (courtesy of the tqdm library)
+              * And shows each running task along with the CPU and RAM it's using
+              * Tasks can also log messages to be displayed
+              * This works in Jupyter notebooks, as well as at the command line
+
+            </aside>
+
             </textarea>
-
-<aside class="notes">
-
-  * When we run these experiments:
-    * labtech shows a progress bar (courtesy of the tqdm library)
-    * And shows each running task along with the CPU and RAM it's using
-    * Tasks can also log messages to be displayed
-  * This works in Jupyter notebooks, as well as at the command line
-
-</aside>
-
           </section>
 
         </section>
@@ -905,7 +925,7 @@ results = lab.run_tasks(experiments)
     * Forgetting to save the results from an experiment you ran
     * Even if you save the result, you might forget to record the parameters you used
     * And finally, sometimes you want to change a later step in an experiment,
-      ...but then you have to re-run the whole experiment because you didn't save intermediate results after earlier steps
+    * ...but then you have to re-run the whole experiment because you didn't save intermediate results after earlier steps
 
 </aside>
 
@@ -1175,6 +1195,12 @@ experiments = [
   </tr>
 </table>
 
+<div class="fragment">
+
+Spot instances + labtech caching = <span class="highlight">profit!!!</span>
+
+</div>
+
 <aside class="notes">
 
   * Now to run your hundreds of experiments as fast as possible, you might think you need to pay for a big cluster of machines
@@ -1183,9 +1209,11 @@ experiments = [
     * How about 192 tasks?
     * Or even 360 tasks?
     * All for dollars an hour or less.
-  * Now we're looking at spot instances, which means your machine might be shutdown with no notice
+      * Just don't quote me on the prices because they change and there might be other costs
+  * Now we're also looking at spot instances, which means your machine might be shutdown with no notice
   * ...but that's not a big problem with labtech caching all your intermediate results!
   * Just restart the machine and let labtech pick up from where it left off
+  * This means labtech is particularly well-suited to being used with cheap spot instances
 
 </aside>
 
@@ -1383,10 +1411,16 @@ class TableTask:
            .reveal table.tool-table td,
            .reveal table.tool-table th {
                text-align: center;
+               vertical-align: top;
+               padding: 6px 8px;
            }
            .reveal table.tool-table td:first-child,
            .reveal table.tool-table th:first-child {
                text-align: left;
+           }
+           .reveal table.tool-table .highlight td {
+               font-size: 1.5em;
+               padding-top: 10px;
            }
            .positive {
                color: #7cb342;
@@ -1400,18 +1434,30 @@ class TableTask:
                color: #E0931F;
                border-color: white !important;
            }
+           .footnote {
+               padding-top: 0.2em;
+               font-size: 0.65em;
+               font-weight: bold;
+           }
+           .warning-icon {
+               width: 25px;
+               vertical-align: text-bottom;
+               margin: 0 !important;
+           }
           </style>
           <section data-markdown>
             <textarea data-template>
 ### Experiment Management
 
-<table class="tool-table" style="font-size: 0.67em;">
+<table class="tool-table" style="font-size: 0.5em;">
   <thead>
-    <th></th>
+    <th width="14.5%"></th>
     <th>Concurrency</th>
     <th>Dependencies</th>
     <th>Caching</th>
-    <th class="fragment" data-fragment-index="1">Lightweight</th>
+    <th class="fragment" data-fragment-index="1">Python Interface</th>
+    <th class="fragment" data-fragment-index="2">Declarative Parameters</th>
+    <th class="fragment" data-fragment-index="3">Dynamic Pipelines</th>
   </thead>
   <tbody>
     <!-- Dagster: Pipelines and caching, but not experiments as it doesn't support permutations -->
@@ -1426,9 +1472,12 @@ class TableTask:
     -->
     <tr>
       <td>W&B Launch</td>
-      <td>✅</td>
-      <td>❌</td>
-      <td>❌</td> <!-- https://docs.wandb.ai/guides/launch/launch-faqs#when-using-docker-queues-to-run-multiple-jobs-that-download-the-same-artifact-withuse_artifact-do-we-re-download-the-artifact-for-every-single-run-of-the-job-or-is-there-any-caching-going-on-under-the-hood -->      <td class="negative fragment" data-fragment-index="1">CLI + Server</td>
+      <td><div class="tool-icon">✅</div></td>
+      <td><div class="tool-icon">❌</div></td>
+      <td><div class="tool-icon">❌</div></td> <!-- https://docs.wandb.ai/guides/launch/launch-faqs#when-using-docker-queues-to-run-multiple-jobs-that-download-the-same-artifact-withuse_artifact-do-we-re-download-the-artifact-for-every-single-run-of-the-job-or-is-there-any-caching-going-on-under-the-hood -->
+      <td class="negative fragment" data-fragment-index="1"><div class="tool-icon">❌</div><div class="footnote">CLI + Server</div></td>
+      <td class="neutral fragment" data-fragment-index="2"><div class="tool-icon"><img class="warning-icon" src="images/emoji_warning.svg"></div><div class="footnote">Param Grid</div></td> <!-- https://docs.wandb.ai/guides/launch/sweeps-on-launch -->
+      <td class="negative fragment" data-fragment-index="3">N/A</td>
     </tr>
     <!--
     <tr>
@@ -1441,38 +1490,48 @@ class TableTask:
     -->
     <tr>
       <td>Polyaxon</td>
-      <td>✅</td>
-      <td>✅</td> <!-- https://polyaxon.com/docs/intro/automation/automation-dag -->
-      <td>✅</td> <!-- https://polyaxon.com/docs/core/scheduling-strategies/operations-caching -->
-      <td class="negative fragment" data-fragment-index="1">YAML + Server</td>
+      <td><div class="tool-icon">✅</div></td>
+      <td><div class="tool-icon">✅</div></td> <!-- https://polyaxon.com/docs/intro/automation/automation-dag -->
+      <td><div class="tool-icon">✅</div></td> <!-- https://polyaxon.com/docs/core/scheduling-strategies/operations-caching -->
+      <td class="negative fragment" data-fragment-index="1"><div class="tool-icon">❌</div><div class="footnote">YAML + Server</div></td>
+      <td class="fragment" data-fragment-index="2"><div class="tool-icon">✅</div></td> <!-- https://polyaxon.com/docs/automation/optimization-engine/grid-search/ -->
+      <td class="negative fragment" data-fragment-index="3"><div class="tool-icon">❌</div><div class="footnote">Fixed in YAML</div></td> <!-- https://polyaxon.com/docs/core/specification/operation/ -->
     </tr>
     <tr>
       <td>DVC</td> <!-- Does support concurrency with -j: https://dvc.org/doc/command-reference/exp/run -->
-      <td>✅</td>
-      <td>✅</td> <!-- https://dvc.org/doc/start/data-pipelines/data-pipelines -->
-      <td>✅</td> <!-- https://dvc.org/doc/start/data-pipelines/data-pipelines -->
-      <td class="neutral fragment" data-fragment-index="1">YAML + CLI</td>
+      <td><div class="tool-icon">✅</div></td>
+      <td><div class="tool-icon">✅</div></td> <!-- https://dvc.org/doc/start/data-pipelines/data-pipelines -->
+      <td><div class="tool-icon">✅</div></td> <!-- https://dvc.org/doc/start/data-pipelines/data-pipelines -->
+      <td class="negative fragment" data-fragment-index="1"><div class="tool-icon">❌</div><div class="footnote">YAML + CLI</div></td>
+      <td class="negative fragment" data-fragment-index="2"><div class="tool-icon">❌</div><div class="footnote">Configured via CLI</div></td> <!-- DIY with CLI: https://dvc.ai/blog/hyperparam-tuning -->
+      <td class="negative fragment" data-fragment-index="3"><div class="tool-icon">❌</div><div class="footnote">Fixed in YAML</div></td> <!-- https://github.com/iterative/dvc/issues/10418 -->
     </tr>
     <tr>
       <td>Ploomber</td>
-      <td>✅</td>
-      <td>✅</td> <!-- https://docs.ploomber.io/en/latest/user-guide/parametrized.html -->
-      <td>✅</td> <!-- https://docs.ploomber.io/en/latest/get-started/intro-to-ploomber.html -->
-      <td class="neutral fragment" data-fragment-index="1">YAML + CLI</td>
+      <td><div class="tool-icon">✅</div></td>
+      <td><div class="tool-icon">✅</div></td> <!-- https://docs.ploomber.io/en/latest/user-guide/parametrized.html -->
+      <td><div class="tool-icon">✅</div></td> <!-- https://docs.ploomber.io/en/latest/get-started/intro-to-ploomber.html -->
+      <td class="negative fragment" data-fragment-index="1"><div class="tool-icon">❌</div><div class="footnote">YAML + CLI</div></td>
+      <td class="neutral fragment" data-fragment-index="2"><div class="tool-icon"><img class="warning-icon" src="images/emoji_warning.svg"></div><div class="footnote">Param Grid</div></td> <!-- https://docs.ploomber.io/en/latest/cookbook/grid.html -->
+      <td class="negative fragment" data-fragment-index="3"><div class="tool-icon">❌</div><div class="footnote">Fixed in YAML</div></td>
     </tr>
     <tr>
       <td>joblib</td>
-      <td>✅</td>
-      <td>❌</td> <!-- Parallel, but no DAG: https://joblib.readthedocs.io/en/stable/why.html -->
-      <td>✅</td> <!-- https://joblib.readthedocs.io/en/stable/memory.html -->
-      <td class="positive fragment" data-fragment-index="1">Python</td>
+      <td><div class="tool-icon">✅</div></td>
+      <td><div class="tool-icon">❌</div></td> <!-- Parallel, but no DAG: https://joblib.readthedocs.io/en/stable/why.html -->
+      <td><div class="tool-icon">✅</div></td> <!-- https://joblib.readthedocs.io/en/stable/memory.html -->
+      <td class="positive fragment" data-fragment-index="1"><div class="tool-icon">✅</div></td>
+      <td class="negative fragment" data-fragment-index="2"><div class="tool-icon">✅</div></td>
+      <td class="negative fragment" data-fragment-index="3"><div>N/A</div></td>
     </tr>
     <tr class="highlight">
       <td>labtech</td>
-      <td>✅</td>
-      <td>✅</td>
-      <td>✅</td>
-      <td class="positive fragment" data-fragment-index="1">Python</td>
+      <td><div class="tool-icon">✅</div></td>
+      <td><div class="tool-icon">✅</div></td>
+      <td><div class="tool-icon">✅</div></td>
+      <td class="positive fragment" data-fragment-index="1"><div class="tool-icon">✅</div></td>
+      <td class="positive fragment" data-fragment-index="2"><div class="tool-icon">✅</div><div class="footnote">Experiments as objects</div></td>
+      <td class="positive fragment" data-fragment-index="3"><div class="tool-icon">✅</div><div class="footnote">Dependencies in code</div></td>
     </tr>
   </tbody>
 </table>
@@ -1482,19 +1541,18 @@ class TableTask:
   * There are quite a few other experiment management tools out there,
     ...I've tried to represent all the major ones here
   * From my review of these tools, most have good support for the three speed-ups we achieved with labtech earlier
-  * However, a big differentiator to me is how lightweight they are to use
-  * A lot of these tools require you to define a pipeline of experiment steps in a YAML configuration file
+  * However, a lot of these tools require you to define a pipeline of experiment steps in a YAML configuration file
     * ...and some even require you to set up a server
-  * By letting you manage your experiments directly from Python code,
-    * ...I'd argue that labtech is not just simpler to get up and running with
-    * ...but that it gives you more flexibility to have dynamic experiments
+    * ...whereas labtech gets you up and running faster with Python code only
+  * Declaring experiment parameters in task objects
+    * ...also makes it easier to control exactly which experiments you want to run
+  * And finally, declaring task dependencies as parameters in code
+    * ...gives you more flexibility to construct dynamic experiments
     * ...like pipelines with optional steps
   * I could definitely imagine using a tool like Ploomber or DVC
-    * ...for more serious experiment management across a team
+    * ...for more rigid experiment management across a team
     * ...or running a regularly scheduled data pipeline,
     * ...but I'd prefer labtech for dynamic and interactive experimentation.
-  * It's also worth mentioning that a lot of these tools are very focussed on ML use cases,
-    * ...while labtech tries to be more of a general purpose tool
 
 </aside>
 
@@ -1538,7 +1596,7 @@ class TableTask:
 
 <div style="font-size: 0.85em;">
   <div><code>pip install labtech</code></div>
-  <div><a style="color: white;" href="https://ben-denham.github.io/labtech">ben-denham.github.io/labtech</a></div>
+  <div><a style="color: white;" href="https://pypi.org/project/labtech">pypi.org/project/labtech</a></div>
   <div style="margin-top: 20px;" class="fragment">
     <h3 class="highlight">I'd love to hear your feedback!</h3>
     <ul>
@@ -1554,7 +1612,9 @@ class TableTask:
 
   * So thanks very much for listening
   * If you've liked what you've seen, go give labtech a go, or give it a star on GitHub
-  * And I'd love to hear your feedback, so come talk to me in one of the breaks
+  * And I'd love to get feedback on how labtech could be better:
+    * If you think labtech might be a good fit for your problem
+    * ...get in touch and I'll help you apply it to your code
   * So thanks again, and I'd be happy to take any questions
 
 </aside>
